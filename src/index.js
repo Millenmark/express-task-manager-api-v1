@@ -1,11 +1,15 @@
 import express from "express";
 import dotenv from "dotenv";
 
+/** IMPORT: CUSTOM MODULES */
+import connectToDatabase from "./config/database.js";
+
 /** IMPORT: ROUTES */
 import routes from "./routes/index.js";
 
 /** CONFIGURATIONS */
 dotenv.config();
+connectToDatabase();
 const app = express();
 app.use(express.json());
 
