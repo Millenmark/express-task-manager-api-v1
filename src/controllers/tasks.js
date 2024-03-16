@@ -19,10 +19,53 @@ export const showAllTasks = async (req, res) => {
   }
 };
 
-export const showTask = (req, res) => {
-  res.status(200).json({ message: req.params.id });
+export const showTask = async (req, res) => {
+  try {
+    const { id: taskID } = req.params;
+    const task = await Task.findById(taskID);
+
+    // This error message will show if the id has the correct format/digits of MongoDB ID
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    res.status(200).json({ task });
+  } catch (err) {
+    // This error message will show if the id has the wrong format/digits of MongoDB ID
+    res.status(500).json({ message: err });
+  }
 };
 
-export const updateTask = (req, res) => {};
+export const updateTask = async (req, res) => {
+  try {
+    const { id: taskID } = req.params;
 
-export const deleteTask = (req, res) => {};
+    const task = await Task.findByIdAndUpdate(taskID, req.body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    res.status(200).json({ message: "Task updated successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
+
+export const deleteTask = async (req, res) => {
+  try {
+    const { id: taskID } = req.params;
+    const task = await Task.findByIdAndDelete(taskID);
+
+    if (!task) {
+      return res.status(404).json({ message: "Task not found" });
+    }
+
+    res.status(200).json({ message: "Task deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ message: err });
+  }
+};
